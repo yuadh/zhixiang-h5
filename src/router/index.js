@@ -54,12 +54,13 @@ const router = new VueRouter({
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
-  const token = store.state.user.token
-  // 没登录却访问user下的路由
-  if (!token && to.path.startsWith('/user')) {
+  // 1. 当你没有token的时候，去访问/user开头的路由，统统去登录（带上访问的路由地址）
+  // 2. 其他清空一概放行
+  const token = store.state.user || ''
+  if (!token.token && to.path.startsWith('/user')) {
     return next('/login?returnUrl=' + encodeURIComponent(to.fullPath))
   }
-  // 其他情况放行
   next()
 })
+
 export default router
